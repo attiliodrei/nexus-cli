@@ -88,6 +88,10 @@ $ nexus-cli image delete -name mlabouardy/nginx -keep 4
 $ nexus-cli image delete -name mlabouardy/nginx -keep 4 -sort semver
 ```
 
+```
+$ nexus-cli image delete -name mlabouardy/nginx -keep 4 -sort semver -dry-run
+```
+
 ## Tutorials
 
 * [Cleanup old Docker images from Nexus Repository](http://www.blog.labouardy.com/cleanup-old-docker-images-from-nexus-repository/)

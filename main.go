@@ -97,6 +97,9 @@ func main() {
 						cli.StringFlag{
 							Name: "sort, s",
 						},
+						cli.BoolFlag{
+							Name: "dry-run, d",
+						},
 					},
 					Action: func(c *cli.Context) error {
 						return deleteImage(c)
@@ -229,6 +232,7 @@ func deleteImage(c *cli.Context) error {
 	var imgName = c.String("name")
 	var tag = c.String("tag")
 	var keep = c.Int("keep")
+	var dryRun = c.Bool("dry-run")
 	var sort = c.String("sort")
 	if sort != "semver" {
 		sort = "default"
@@ -257,8 +261,12 @@ func deleteImage(c *cli.Context) error {
 				}
 				if len(tags) >= keep {
 					for _, tag := range tags[:len(tags)-keep] {
-						fmt.Printf("%s:%s image will be deleted ...\n", imgName, tag)
-						r.DeleteImageByTag(imgName, tag)
+						if dryRun {
+							fmt.Printf("%s:%s image would be deleted (Dry Run) ...\n", imgName, tag)
+						} else {
+							fmt.Printf("%s:%s image will be deleted ...\n", imgName, tag)
+							r.DeleteImageByTag(imgName, tag)
+						}
 					}
 				} else {
 					fmt.Printf("Only %d images are available\n", len(tags))
