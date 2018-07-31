@@ -8,6 +8,7 @@ import (
 	"github.com/mlabouardy/nexus-cli/registry"
 	"github.com/urfave/cli"
 	"github.com/blang/semver"
+	"strings"
 )
 
 const (
@@ -120,6 +121,12 @@ func setNexusCredentials(c *cli.Context) error {
 	fmt.Scan(&username)
 	fmt.Print("Enter Nexus Password: ")
 	fmt.Scan(&password)
+
+	// The password will be read by a toml parser (registry.go)
+	// This parser only allows certain escape character sequences and will therefore
+	// throw exceptions when your pw contains backslahes in certain cases.
+	// Hence we escape all backslash chars again here.
+	password = strings.Replace(password, "\\", "\\\\", -1)
 
 	data := struct {
 		Host       string
