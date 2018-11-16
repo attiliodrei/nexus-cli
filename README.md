@@ -1,5 +1,3 @@
-[![CircleCI](https://circleci.com/gh/mlabouardy/nexus-cli.svg?style=svg)](https://circleci.com/gh/mlabouardy/nexus-cli) [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
-
 <div align="center">
 <img src="logo.png" width="60%"/>
 </div>
@@ -51,7 +49,7 @@ wget https://s3.eu-west-2.amazonaws.com/nexus-cli/1.0.0-beta/freebsd/nexus-cli
 To install the library and command line program, use the following:
 
 ```
-go get -u github.com/mlabouardy/nexus-cli
+go get -u github.com/eugenmayer/nexus-cli
 ```
 
 ## Available Commands

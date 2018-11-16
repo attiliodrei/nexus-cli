@@ -5,9 +5,9 @@ import (
 	"html/template"
 	"os"
 
-	"github.com/mlabouardy/nexus-cli/registry"
-	"github.com/urfave/cli"
 	"github.com/blang/semver"
+	"github.com/eugenmayer/nexus-cli/registry"
+	"github.com/urfave/cli"
 )
 
 const (
