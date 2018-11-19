@@ -51,6 +51,11 @@ Delete a specific tag
 $ nexus-cli image delete -name dockernamespace/yourimage -tag 1.2.0
 ```
 
+Delete several specific tags
+```
+$ nexus-cli image delete -name dockernamespace/yourimage -tag 1.2.0,1.2.1,1.2.3-beta1
+```
+
 Run a dry-run test prior deleting
 ```
 $ nexus-cli image delete -name dockernamespace/yourimage -keep 4 -dry-run
