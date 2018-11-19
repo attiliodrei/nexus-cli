@@ -5,12 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"github.com/BurntSushi/toml"
+	"github.com/eugenmayer/nexus-cli/utils"
 	"net/http"
 	"os"
 )
 
-const ACCEPT_HEADER = "application/vnd.docker.distribution.manifest.v2+json"
-const CREDENTIALS_FILE = ".credentials"
+const AcceptHeader = "application/vnd.docker.distribution.manifest.v2+json"
 
 type Registry struct {
 	Host       string `toml:"nexus_host"`
@@ -42,13 +42,14 @@ type LayerInfo struct {
 
 func NewRegistry() (Registry, error) {
 	r := Registry{}
-	if _, err := os.Stat(CREDENTIALS_FILE); os.IsNotExist(err) {
-		return r, errors.New(fmt.Sprintf("%s file not found\n", CREDENTIALS_FILE))
+	configurationPath := utils.ExpandTildeInPath("~/.nexus-cli")
+	if _, err := os.Stat(configurationPath); os.IsNotExist(err) {
+		return r, errors.New(fmt.Sprintf("Configuration not found at %s - please run 'nexus-cli configure'\n", configurationPath))
 	} else if err != nil {
 		return r, err
 	}
 
-	if _, err := toml.DecodeFile(CREDENTIALS_FILE, &r); err != nil {
+	if _, err := toml.DecodeFile(configurationPath, &r); err != nil {
 		return r, err
 	}
 	return r, nil
@@ -63,7 +64,7 @@ func (r Registry) ListImages() ([]string, error) {
 		return nil, err
 	}
 	req.SetBasicAuth(r.Username, r.Password)
-	req.Header.Add("Accept", ACCEPT_HEADER)
+	req.Header.Add("Accept", AcceptHeader)
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -90,7 +91,7 @@ func (r Registry) ListTagsByImage(image string) ([]string, error) {
 		return nil, err
 	}
 	req.SetBasicAuth(r.Username, r.Password)
-	req.Header.Add("Accept", ACCEPT_HEADER)
+	req.Header.Add("Accept", AcceptHeader)
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -118,7 +119,7 @@ func (r Registry) ImageManifest(image string, tag string) (ImageManifest, error)
 		return imageManifest, err
 	}
 	req.SetBasicAuth(r.Username, r.Password)
-	req.Header.Add("Accept", ACCEPT_HEADER)
+	req.Header.Add("Accept", AcceptHeader)
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -149,7 +150,7 @@ func (r Registry) DeleteImageByTag(image string, tag string) error {
 		return err
 	}
 	req.SetBasicAuth(r.Username, r.Password)
-	req.Header.Add("Accept", ACCEPT_HEADER)
+	req.Header.Add("Accept", AcceptHeader)
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -175,7 +176,7 @@ func (r Registry) getImageSHA(image string, tag string) (string, error) {
 		return "", err
 	}
 	req.SetBasicAuth(r.Username, r.Password)
-	req.Header.Add("Accept", ACCEPT_HEADER)
+	req.Header.Add("Accept", AcceptHeader)
 
 	resp, err := client.Do(req)
 	if err != nil {

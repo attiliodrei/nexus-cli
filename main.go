@@ -2,17 +2,19 @@ package main
 
 import (
 	"fmt"
-	"html/template"
-	"os"
-
 	"github.com/blang/semver"
 	"github.com/eugenmayer/nexus-cli/registry"
+	"github.com/eugenmayer/nexus-cli/utils"
 	"github.com/urfave/cli"
+	"golang.org/x/crypto/ssh/terminal"
+	"html/template"
+	"os"
 	"strings"
+	"syscall"
 )
 
 const (
-	CREDENTIALS_TEMPLATES = `# Nexus Credentials
+	CredentialTemplate = `# Nexus Credentials
 nexus_host = "{{ .Host }}"
 nexus_username = "{{ .Username }}"
 nexus_password = "{{ .Password }}"
@@ -23,11 +25,11 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "Nexus CLI"
 	app.Usage = "Manage Docker Private Registry on Nexus"
-	app.Version = "1.0.0-beta"
+	app.Version = "0.0.2"
 	app.Authors = []cli.Author{
-		cli.Author{
-			Name:  "Mohamed Labouardy",
-			Email: "mohamed@labouardy.com",
+		{
+			Name:  "Eugen Mayer, Karol Buchta, Mohamed Labouardy",
+			Email: "-",
 		},
 	}
 	app.Commands = []cli.Command{
@@ -58,7 +60,7 @@ func main() {
 							Usage: "List tags by image name",
 						},
 						cli.StringFlag{
-							Name: "sort, s",
+							Name:  "sort, s",
 							Usage: "Sort tags by semantic version, assuming all tags are semver except latest.",
 						},
 					},
@@ -114,7 +116,7 @@ func main() {
 	app.Run(os.Args)
 }
 
-func setNexusCredentials(c *cli.Context) error {
+func setNexusCredentials(_ *cli.Context) error {
 	var hostname, repository, username, password string
 	fmt.Print("Enter Nexus Host: ")
 	fmt.Scan(&hostname)
@@ -123,13 +125,21 @@ func setNexusCredentials(c *cli.Context) error {
 	fmt.Print("Enter Nexus Username: ")
 	fmt.Scan(&username)
 	fmt.Print("Enter Nexus Password: ")
-	fmt.Scan(&password)
+	bytePw, err := terminal.ReadPassword(int(syscall.Stdin))
+	if err != nil {
+		return err
+	}
 
+	password = string(bytePw)
 	// The password will be read by a toml parser (registry.go)
 	// This parser only allows certain escape character sequences and will therefore
 	// throw exceptions when your pw contains backslahes in certain cases.
 	// Hence we escape all backslash chars again here.
 	password = strings.Replace(password, "\\", "\\\\", -1)
+
+	// we need to remove trailing slashes
+	hostname = strings.TrimRight(hostname, "/")
+	fmt.Printf("Removed potential trailing slash on Nexus Host URL, now: %s\n", hostname)
 
 	data := struct {
 		Host       string
@@ -143,12 +153,13 @@ func setNexusCredentials(c *cli.Context) error {
 		repository,
 	}
 
-	tmpl, err := template.New(".credentials").Parse(CREDENTIALS_TEMPLATES)
+	tmpl, err := template.New(".credentials").Parse(CredentialTemplate)
 	if err != nil {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	f, err := os.Create(".credentials")
+	configurationPath := utils.ExpandTildeInPath("~/.nexus-cli")
+	f, err := os.Create(configurationPath)
 	if err != nil {
 		return cli.NewExitError(err.Error(), 1)
 	}
@@ -157,10 +168,12 @@ func setNexusCredentials(c *cli.Context) error {
 	if err != nil {
 		return cli.NewExitError(err.Error(), 1)
 	}
+
+	fmt.Printf("Configuration saved to succesfully to: %s\n", configurationPath)
 	return nil
 }
 
-func listImages(c *cli.Context) error {
+func listImages(_ *cli.Context) error {
 	r, err := registry.NewRegistry()
 	if err != nil {
 		return cli.NewExitError(err.Error(), 1)
@@ -282,7 +295,7 @@ func deleteImage(c *cli.Context) error {
 	return nil
 }
 
-func getSortComparisonStrategy(sort string) func(str1, str2 string) bool{
+func getSortComparisonStrategy(sort string) func(str1, str2 string) bool {
 	var compareStringNumber func(str1, str2 string) bool
 
 	if sort == "default" {
@@ -301,11 +314,11 @@ func getSortComparisonStrategy(sort string) func(str1, str2 string) bool{
 			}
 			version1, err1 := semver.Make(str1)
 			if err1 != nil {
-			    fmt.Printf("Error parsing version1: %q\n", err1)
+				fmt.Printf("Error parsing version1: %q\n", err1)
 			}
 			version2, err2 := semver.Make(str2)
 			if err2 != nil {
-			    fmt.Printf("Error parsing version2: %q\n", err2)
+				fmt.Printf("Error parsing version2: %q\n", err2)
 			}
 			return version1.LT(version2)
 		}

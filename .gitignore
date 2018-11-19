@@ -1,5 +1,4 @@
 .idea/workspace.xml
 .idea/php.xml
-.credentials
 .DS_Store
-.vendor
+vendor
