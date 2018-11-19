@@ -61,7 +61,7 @@ func main() {
 						},
 						cli.StringFlag{
 							Name:  "sort, s",
-							Usage: "Sort tags by semantic version, assuming all tags are semver except latest.",
+							Usage: "Default is semver (not other implemented yet), sort tags by semantic version, assuming all tags are semver except latest.",
 						},
 					},
 					Action: func(c *cli.Context) error {
@@ -98,6 +98,7 @@ func main() {
 						},
 						cli.StringFlag{
 							Name: "sort, s",
+							Usage: "Default is semver (not other implemented yet), sort tags by semantic version, assuming all tags are semver except latest.",
 						},
 						cli.BoolFlag{
 							Name: "dry-run, d",
@@ -298,13 +299,7 @@ func deleteImage(c *cli.Context) error {
 func getSortComparisonStrategy(sort string) func(str1, str2 string) bool {
 	var compareStringNumber func(str1, str2 string) bool
 
-	if sort == "default" {
-		compareStringNumber = func(str1, str2 string) bool {
-			return extractNumberFromString(str1) < extractNumberFromString(str2)
-		}
-	}
-
-	if sort == "semver" {
+	if sort == "default" || sort == "semver" {
 		compareStringNumber = func(str1, str2 string) bool {
 			if str1 == "latest" {
 				return false
