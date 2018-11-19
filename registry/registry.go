@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/BurntSushi/toml"
 	"github.com/eugenmayer/nexus-cli/utils"
+	"html"
 	"net/http"
 	"os"
 )
@@ -52,6 +53,9 @@ func NewRegistry() (Registry, error) {
 	if _, err := toml.DecodeFile(configurationPath, &r); err != nil {
 		return r, err
 	}
+
+	// credits https://github.com/mlabouardy/nexus-cli/pull/12/files
+	r.Password = html.UnescapeString(r.Password)
 	return r, nil
 }
 
@@ -162,7 +166,7 @@ func (r Registry) DeleteImageByTag(image string, tag string) error {
 		return errors.New(fmt.Sprintf("HTTP Code: %d", resp.StatusCode))
 	}
 
-	fmt.Printf("%s:%s has been successful deleted\n", image, tag)
+	fmt.Printf("%s:%s has been successfully deleted\n", image, tag)
 
 	return nil
 }
