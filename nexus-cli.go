@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/blang/semver"
-	"github.com/eugenmayer/nexus-cli/registry"
-	"github.com/eugenmayer/nexus-cli/utils"
+	"github.com/attiliodrei/nexus-cli/registry"
+	"github.com/attiliodrei/nexus-cli/utils"
 	"github.com/urfave/cli"
 	"golang.org/x/crypto/ssh/terminal"
 	"html/template"
