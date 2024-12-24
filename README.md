@@ -67,6 +67,11 @@ Delete all tags, but keep the most recent 4. Be aware, `latest` does also count 
 $ nexus-cli image delete -name dockernamespace/yourimage -keep 4
 ```
 
+##
+digest=$(curl -H 'Accept: application/vnd.docker.distribution.manifest.v2+json'  http://10.15.20.85:8081/repository/docker/v2/restreamer-v4/manifests/1.0-prod  | jq -r '.config.digest')
+curl  -H 'Accept: application/vnd.docker.distribution.manifest.v2+json'   http://10.15.20.85:8081/repository/docker/v2/restreamer-v4/blobs/$digest  | jq -r '.created'
+
+
 
 ## Tutorials
 
