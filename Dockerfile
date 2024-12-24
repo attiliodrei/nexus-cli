@@ -1,5 +1,5 @@
 FROM eugenmayer/golang-builder AS go-build-env
-ENV BUILDFOLDER=/go/src/github.com/eugenmayer/nexus-cli
+ENV BUILDFOLDER=/go/src/github.com/attiliodrei/nexus-cli
 ENV DISTFOLDER=${BUILDFOLDER}/dist
 RUN mkdir -p ${BUILDFOLDER}
 WORKDIR ${BUILDFOLDER}
