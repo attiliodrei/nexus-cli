@@ -1,4 +1,4 @@
-module github.com/eugenmayer/nexus-cli
+module github.com/attiliodrei/nexus-cli
 
 go 1.12
 
