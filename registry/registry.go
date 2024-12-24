@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/BurntSushi/toml"
-	"github.com/eugenmayer/nexus-cli/utils"
+	"github.com/attiliodrei/nexus-cli/utils"
 	"html"
 	"net/http"
 	"os"
