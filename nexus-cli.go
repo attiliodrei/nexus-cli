@@ -348,11 +348,11 @@ func getSortComparisonStrategy(sort string) func(str1, str2 string) bool {
 			}
 			version1, err1 := semver.Make(str1)
 			if err1 != nil {
-				fmt.Printf("Error parsing version1: %q\n", err1)
+				//fmt.Printf("Error parsing version1: %q\n", err1)
 			}
 			version2, err2 := semver.Make(str2)
 			if err2 != nil {
-				fmt.Printf("Error parsing version2: %q\n", err2)
+				//fmt.Printf("Error parsing version2: %q\n", err2)
 			}
 			return version1.LT(version2)
 		}
