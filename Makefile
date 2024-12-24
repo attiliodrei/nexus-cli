@@ -12,4 +12,4 @@ ci-build:
 build-docker:
 	#docker stop drupalwikihost > /dev/null 2>&1 || true
 	docker build --rm -t nexus-cli-builder .
-	docker run -v `pwd`/dist:/dist --rm --entrypoint /bin/sh nexus-cli-builder -c 'cp /go/src/github.com/eugenmayer/nexus-cli/dist/nexus-cli* /dist/'
+	docker run -v `pwd`/dist:/dist --rm --entrypoint /bin/sh nexus-cli-builder -c 'cp /go/src/github.com/attiliodrei/nexus-cli/dist/nexus-cli* /dist/'
